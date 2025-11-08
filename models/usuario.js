@@ -1,13 +1,18 @@
 const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
-module.exports = (sequelize) => {
-  return sequelize.define('Usuario', {
-    idUsuario: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    nombre: DataTypes.STRING,
-    rol: DataTypes.STRING,
-    contrasenaHash: DataTypes.STRING
-  }, {
-    tableName: 'Usuario',
-    timestamps: false
-  });
-};
+const Usuario = sequelize.define('Usuario', {
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+}, {
+    timestamps: true,
+});
+
+module.exports = Usuario;

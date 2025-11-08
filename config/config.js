@@ -1,10 +1,8 @@
-module.exports = {
-  development: {
-    username: 'root',
-    password: '',
-    database: 'erp_vallegrande',
+const { Sequelize } = require('sequelize');
+
+const sequelize = new Sequelize('erp_vallegrande', 'root', '', {
     host: 'localhost',
     dialect: 'mysql',
-    logging: false
-  }
-};
+});
+
+module.exports = sequelize;
