@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Clientes - ERP Vallegrande</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f5f3eb;
+      font-family: 'Segoe UI', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* === 🔹 SIDEBAR === */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 240px;
+      height: 100%;
+      background-color: #e4e0cc;
+      padding-top: 60px;
+      transition: transform 0.3s ease-in-out;
+      z-index: 999;
+      box-shadow: 2px 0 6px rgba(0, 0, 0, 0.1);
+    }
+    .sidebar.collapsed { transform: translateX(-100%); }
+
+    .sidebar a {
+      display: block;
+      padding: 12px 20px;
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .sidebar a.active, .sidebar a:hover {
+      background-color: #7d8b4d;
+      color: #fff;
+      border-radius: 8px;
+      margin: 4px 12px;
+    }
+
+    /* === 🔹 NAVBAR === */
+    .navbar {
+      background-color: #f0ead2;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+    }
+    .menu-toggle { cursor: pointer; font-size: 1.8rem; color: #5a5a2c; }
+
+    /* === 🔹 CONTENIDO === */
+    .content {
+      margin-left: 0;
+      padding: 80px 20px 20px;
+      transition: margin-left 0.3s ease-in-out;
+    }
+    .content.shifted { margin-left: 240px; }
+
+    /* === 🔹 FORMULARIO Y TABLA === */
+    .card {
+      border-radius: 16px;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .table thead {
+      background-color: #7d8b4d;
+      color: white;
+    }
+
+    .btn-olive { background-color: #7d8b4d; color: #fff; border: none; }
+    .btn-olive:hover { background-color: #6f7c45; }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.show { transform: translateX(0); }
+      .content { margin-left: 0 !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🔸 Navbar -->
+  <nav class="navbar navbar-light px-3 fixed-top">
+    <div class="d-flex align-items-center">
+      <span class="menu-toggle me-3" id="toggleSidebar">☰</span>
+      <img src="img/logo_vallegrande.png" alt="Logo" height="40" class="me-2">
+      <span class="navbar-brand mb-0 h4">Gestión de Clientes - Vallegrande</span>
+    </div>
+    <div class="d-flex align-items-center">
+      <span class="me-2">Admin</span>
+      <div class="rounded-circle bg-dark text-white d-flex justify-content-center align-items-center"
+           style="width:35px;height:35px;">A</div>
+    </div>
+  </nav>
+
+  <!-- 🔹 Sidebar -->
+  <div class="sidebar collapsed" id="sidebarMenu">
+    <a href="index.html">🏠 Dashboard</a>
+    <a href="productos.html">📦 Inventario</a>
+    <a href="#" class="active">👥 Clientes</a>
+    <a href="reportes.html">📊 Reportes</a>
+    <a href="remisiones.html">🧾 Remisiones</a>
+    <a href="#">⚙️ Configuración</a>
+  </div>
+
+  <!-- 🔹 Contenido -->
+  <div class="content" id="mainContent">
+    <div class="container-fluid">
+
+      <h3 class="fw-bold text-secondary mb-4">Gestión de Clientes</h3>
+
+      <!-- 🔸 Formulario -->
+      <div class="card p-4 mb-4">
+        <h5 class="mb-3 text-olive">Registrar Cliente</h5>
+        <form id="formCliente">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Nombre</label>
+              <input id="nombre" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Identificación</label>
+              <input id="identificacion" class="form-control" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Dirección</label>
+              <input id="direccion" class="form-control">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Teléfono</label>
+              <input id="telefono" class="form-control">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Email</label>
+              <input id="email" class="form-control" type="email">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Tipo de Cliente</label>
+              <input id="tipoCliente" class="form-control">
+            </div>
+          </div>
+          <button class="btn btn-olive w-100">💾 Guardar Cliente</button>
+        </form>
+      </div>
+
+      <div id="mensaje" class="text-center fw-bold mb-3 text-success"></div>
+
+      <!-- 🔸 Tabla -->
+      <div class="card p-3">
+        <h5 class="mb-3">📋 Listado de Clientes</h5>
+        <div class="table-responsive">
+          <table class="table table-hover text-center align-middle" id="tablaClientes">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Identificación</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Tipo Cliente</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <a href="index.html" class="btn btn-outline-secondary">⬅ Volver al Dashboard</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const toggle = document.getElementById('toggleSidebar');
+    const sidebar = document.getElementById('sidebarMenu');
+    const content = document.getElementById('mainContent');
+    toggle.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      content.classList.toggle('shifted');
+    });
+  </script>
+  <script src="clientes.js"></script>
+</body>
+</html>
