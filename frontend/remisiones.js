@@ -58,32 +58,31 @@ async function cargarRemisiones() {
     const remisiones = await res.json();
     tbodyRemisiones.innerHTML = '';
 
-    remisiones.forEach(r => {
-      // Convertir fecha a hora local Colombia
-      const fechaLocal = new Date(r.fechaEmision + 'Z').toLocaleDateString('es-CO', {
-        timeZone: 'America/Bogota',
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
+  remisiones.forEach(r => {
+  const fechaISO = r.fechaEmision.replace(' ', 'T');
 
-      // Traducir estado
-      const estadoMostrar = r.estado === 'PENDIENTE' ? 'EMITIDA' : r.estado;
+  const fechaLocal = new Date(fechaISO).toLocaleDateString('es-CO', {
+    timeZone: 'America/Bogota',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
 
-      tbodyRemisiones.innerHTML += `
-        <tr>
-          <td>${r.idRemision}</td>
-          <td>${r.Cliente ? r.Cliente.nombre : 'Sin cliente'}</td>
-          <td>${fechaLocal}</td>
-          <td>${estadoMostrar}</td>
-          <td>
-            <a href="http://localhost:3000/api/pdf/${r.idRemision}" target="_blank" class="btn btn-sm btn-danger">
-              📄 PDF
-            </a>
-          </td>
-        </tr>
-      `;
-    });
+  const estadoMostrar = r.estado === 'PENDIENTE' ? 'EMITIDA' : r.estado;
+
+  tbodyRemisiones.innerHTML += `
+    <tr>
+      <td>${r.idRemision}</td>
+      <td>${r.Cliente ? r.Cliente.nombre : 'Sin cliente'}</td>
+      <td>${fechaLocal}</td>
+      <td>${estadoMostrar}</td>
+      <td>
+        <a href="http://localhost:3000/api/pdf/${r.idRemision}" target="_blank" class="btn btn-sm btn-danger">📄 PDF</a>
+      </td>
+    </tr>
+  `;
+});
+
   } catch {
     tbodyRemisiones.innerHTML = '<tr><td colspan="5" class="text-danger">Error al cargar remisiones</td></tr>';
   }

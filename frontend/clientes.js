@@ -11,8 +11,7 @@ form.addEventListener('submit', async (e) => {
     identificacion: document.getElementById('identificacion').value,
     direccion: document.getElementById('direccion').value,
     telefono: document.getElementById('telefono').value,
-    email: document.getElementById('email').value,
-    tipoCliente: document.getElementById('tipoCliente').value
+    email: document.getElementById('email').value
   };
 
   try {

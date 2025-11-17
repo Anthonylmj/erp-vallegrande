@@ -16,12 +16,18 @@ const clienteRoutes = require('./routes/clientes');
 const productoRoutes = require('./routes/productos');
 const remisionRoutes = require('./routes/remisiones');
 const pdfRoutes = require('./routes/pdf');
+const reporteRoutes = require('./routes/reportes');
+const despachoRoutes = require('./routes/despachos');
+
 
 // ✅ Montar rutas
 app.use('/api/clientes', clienteRoutes);
 app.use('/api/productos', productoRoutes);
 app.use('/api/remisiones', remisionRoutes);
+app.use('/api/reportes', reporteRoutes);
 app.use('/api/pdf', pdfRoutes);
+app.use("/api/despachos", despachoRoutes);
+
 
 // ✅ Ruta raíz
 app.get('/', (req, res) => {

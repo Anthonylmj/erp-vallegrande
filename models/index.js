@@ -1,5 +1,5 @@
-const { Sequelize } = require('sequelize');
-const config = require('../config/config').development;
+const { Sequelize, DataTypes, Op } = require("sequelize");
+const config = require("../config/config").development;
 
 const sequelize = new Sequelize(
   config.database,
@@ -12,63 +12,70 @@ const sequelize = new Sequelize(
   }
 );
 
-// ✅ Importación de modelos
-const Cliente = require('./cliente')(sequelize);
-const Producto = require('./producto')(sequelize);
-const Pedido = require('./pedido')(sequelize);
-const Remision = require('./remision')(sequelize);
-const DetalleRemision = require('./detalleRemision')(sequelize);
-const Usuario = require('./usuario')(sequelize);
-const CategoriaProducto = require('./categoriaProducto')(sequelize);
+// =========================
+//  Importación de modelos
+// =========================
+const Cliente = require("./cliente")(sequelize, DataTypes);
+const Producto = require("./producto")(sequelize, DataTypes);
+const Pedido = require("./pedido")(sequelize, DataTypes);
+const Remision = require("./remision")(sequelize, DataTypes);
+const DetalleRemision = require("./detalleRemision")(sequelize, DataTypes);
+const Usuario = require("./usuario")(sequelize, DataTypes);
+const CategoriaProducto = require("./categoriaProducto")(sequelize, DataTypes);
+const Despacho = require("./despacho")(sequelize, DataTypes);
 
-//
-// ======================
-// 🔹 Relaciones
-// ======================
-//
+// =========================
+//  Relaciones
+// =========================
 
-// Cliente - Pedido
-Cliente.hasMany(Pedido, { foreignKey: 'idCliente' });
-Pedido.belongsTo(Cliente, { foreignKey: 'idCliente' });
+// Cliente → Pedido
+Cliente.hasMany(Pedido, { foreignKey: "idCliente" });
+Pedido.belongsTo(Cliente, { foreignKey: "idCliente" });
 
-// Pedido - Remisión
-Pedido.hasOne(Remision, { foreignKey: 'idPedido' });
-Remision.belongsTo(Pedido, { foreignKey: 'idPedido' });
+// Pedido → Remisión
+Pedido.hasOne(Remision, { foreignKey: "idPedido" });
+Remision.belongsTo(Pedido, { foreignKey: "idPedido" });
 
-// 🔹 Cliente - Remisión (⚠️ importante: antes faltaba esta relación)
-Cliente.hasMany(Remision, { foreignKey: 'idCliente' });
-Remision.belongsTo(Cliente, { foreignKey: 'idCliente' });
+// Cliente → Remisión (IMPORTANTE)
+Cliente.hasMany(Remision, { foreignKey: "idCliente" });
+Remision.belongsTo(Cliente, { foreignKey: "idCliente" });
 
-// Remisión - DetalleRemisión
-Remision.hasMany(DetalleRemision, { foreignKey: 'idRemision' });
-DetalleRemision.belongsTo(Remision, { foreignKey: 'idRemision' });
+// Remisión → Detalles
+Remision.hasMany(DetalleRemision, { foreignKey: "idRemision" });
+DetalleRemision.belongsTo(Remision, { foreignKey: "idRemision" });
 
-// Producto - DetalleRemisión
-Producto.hasMany(DetalleRemision, { foreignKey: 'idProducto' });
-DetalleRemision.belongsTo(Producto, { foreignKey: 'idProducto' });
+// Producto → Detalles
+Producto.hasMany(DetalleRemision, { foreignKey: "idProducto" });
+DetalleRemision.belongsTo(Producto, { foreignKey: "idProducto" });
 
-// Usuario - Pedido
-Usuario.hasMany(Pedido, { foreignKey: 'idUsuario' });
-Pedido.belongsTo(Usuario, { foreignKey: 'idUsuario' });
+// Usuario → Pedido
+Usuario.hasMany(Pedido, { foreignKey: "idUsuario" });
+Pedido.belongsTo(Usuario, { foreignKey: "idUsuario" });
 
-// Usuario - Remisión (creadoPor)
-Usuario.hasMany(Remision, { foreignKey: 'creadoPor' });
-Remision.belongsTo(Usuario, { foreignKey: 'creadoPor' });
+// Usuario → Remisión
+Usuario.hasMany(Remision, { foreignKey: "creadoPor" });
+Remision.belongsTo(Usuario, { foreignKey: "creadoPor" });
 
-// Categoría - Producto
-CategoriaProducto.hasMany(Producto, { foreignKey: 'idCategoria' });
-Producto.belongsTo(CategoriaProducto, { foreignKey: 'idCategoria' });
+// Categoría → Producto
+CategoriaProducto.hasMany(Producto, { foreignKey: "idCategoria" });
+Producto.belongsTo(CategoriaProducto, { foreignKey: "idCategoria" });
 
-// ======================
-// 🔹 Exportación de modelos
-// ======================
+// Remisión → Despacho
+Remision.hasMany(Despacho, { foreignKey: "idRemision" });
+Despacho.belongsTo(Remision, { foreignKey: "idRemision" });
+
+// =========================
+//  Exportación de modelos
+// =========================
 module.exports = {
   sequelize,
+  Op,
   Cliente,
   Producto,
   Pedido,
   Remision,
   DetalleRemision,
   Usuario,
-  CategoriaProducto
+  CategoriaProducto,
+  Despacho
 };
